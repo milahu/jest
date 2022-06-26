@@ -2850,6 +2850,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@milahu/gnumake-jobclient@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@milahu/gnumake-jobclient@npm:0.0.3"
+  checksum: 903bc8809e43e13784c7a064bbb427832dca70787c53bafbd0f79656cd1190a9c7781d64b42939af8c8637cef99545b25bf4218183e7d9b95243900dc82a1d9b
+  languageName: node
+  linkType: hard
+
 "@mrmlnc/readdir-enhanced@npm:^2.2.1":
   version: 2.2.1
   resolution: "@mrmlnc/readdir-enhanced@npm:2.2.1"
