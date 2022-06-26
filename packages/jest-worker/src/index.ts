@@ -10,6 +10,8 @@
 import {cpus} from 'os';
 import Farm from './Farm';
 import WorkerPool from './WorkerPool';
+import {JobClient} from '@milahu/gnumake-jobclient';
+import {debug} from './debug';
 import type {
   FarmOptions,
   PoolExitResult,
@@ -77,6 +79,8 @@ export default class JestWorker {
     this._options = {...options};
     this._ending = false;
 
+    debug(`Worker.constructor: this._options.jobClient = ${this._options.jobClient}`);
+
     const workerPoolOptions: WorkerPoolOptions = {
       enableWorkerThreads: this._options.enableWorkerThreads ?? false,
       forkOptions: this._options.forkOptions ?? {},
@@ -84,7 +88,10 @@ export default class JestWorker {
       numWorkers: this._options.numWorkers ?? Math.max(cpus().length - 1, 1),
       resourceLimits: this._options.resourceLimits ?? {},
       setupArgs: this._options.setupArgs ?? [],
+      jobClient: this._options.jobClient ?? JobClient(),
     };
+
+    debug(`Worker.constructor: workerPoolOptions.jobClient = ${workerPoolOptions.jobClient}`);
 
     if (this._options.WorkerPool) {
       // @ts-expect-error: constructor target any?

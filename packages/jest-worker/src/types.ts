@@ -7,6 +7,7 @@
 
 import type {ForkOptions} from 'child_process';
 import type {EventEmitter} from 'events';
+import type {JobClient} from '@milahu/gnumake-jobclient';
 
 // import type {ResourceLimits} from 'worker_threads';
 // This is not present in the Node 12 typings
@@ -88,6 +89,7 @@ export type FarmOptions = {
     options?: WorkerPoolOptions,
   ) => WorkerPoolInterface;
   enableWorkerThreads?: boolean;
+  jobClient?: JobClient | null;
 };
 
 export type WorkerPoolOptions = {
@@ -97,6 +99,7 @@ export type WorkerPoolOptions = {
   maxRetries: number;
   numWorkers: number;
   enableWorkerThreads: boolean;
+  jobClient: JobClient | null;
 };
 
 export type WorkerOptions = {

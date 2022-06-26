@@ -15,6 +15,7 @@
     "supports-color": "^7.0.0"
   },
   "devDependencies": {
+    "@milahu/gnumake-jobclient": "^0.0.3",
     "@types/merge-stream": "^1.1.2",
     "@types/supports-color": "^7.2.0",
     "get-stream": "^6.0.0",

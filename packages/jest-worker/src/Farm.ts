@@ -7,6 +7,8 @@
 
 /* eslint-disable local/ban-types-eventually */
 
+import {debug} from './debug';
+
 import {
   CHILD_MESSAGE_CALL,
   ChildMessage,
@@ -43,6 +45,8 @@ export default class Farm {
     this._offset = 0;
     this._queue = [];
 
+    debug(`Farm.constructor: numOfWorkers = ${numOfWorkers}`);
+
     if (computeWorkerKey) {
       this._computeWorkerKey = computeWorkerKey;
     }
@@ -52,6 +56,8 @@ export default class Farm {
     method: string,
     ...args: Array<unknown>
   ): PromiseWithCustomMessage<unknown> {
+    debug('');
+    debug(`Farm.doWork: method=${method} args=${args}`);
     const customMessageListeners = new Set<OnCustomMessage>();
 
     const addCustomMessageListener = (listener: OnCustomMessage) => {
@@ -96,8 +102,10 @@ export default class Farm {
         const task = {onCustomMessage, onEnd, onStart, request};
 
         if (worker) {
+          debug(`Farm.doWork: re-use last worker -> add task to queue`);
           this._enqueue(task, worker.getWorkerId());
         } else {
+          debug(`Farm.doWork: use any worker -> call push`);
           this._push(task);
         }
       },
@@ -122,10 +130,12 @@ export default class Farm {
 
   private _process(workerId: number): Farm {
     if (this._isLocked(workerId)) {
+      debug(`Farm._process: worker ${workerId} is locked`);
       return this;
     }
 
     const task = this._getNextTask(workerId);
+    debug(`Farm._process: worker ${workerId}: task = ${task}`);
 
     if (!task) {
       return this;
@@ -134,20 +144,32 @@ export default class Farm {
     const onEnd = (error: Error | null, result: unknown) => {
       task.onEnd(error, result);
 
+      debug(`Farm._process: worker ${workerId}: onEnd: done. unlock worker ${workerId}`);
+
       this._unlock(workerId);
       this._process(workerId);
     };
 
-    task.request[1] = true;
+    debug(`Farm._process: worker ${workerId}: lock worker ${workerId}`);
 
     this._lock(workerId);
-    this._callback(
+
+    debug(`Farm._process: worker ${workerId}: send task to worker ...`);
+
+    task.request[1] = this._callback(
       workerId,
       task.request,
       task.onStart,
       onEnd,
       task.onCustomMessage,
     );
+
+    if (task.request[1] == false) {
+      // task was not sent to worker
+      this._unlock(workerId);
+    }
+
+    debug(`Farm._process: worker ${workerId}: send task to worker ... ${task.request[1] ? 'ok' : 'fail'}`);
 
     return this;
   }

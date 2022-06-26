@@ -12192,6 +12192,7 @@ fsevents@^1.2.7:
   version: 0.0.0-use.local
   resolution: "jest-worker@workspace:packages/jest-worker"
   dependencies:
+    "@milahu/gnumake-jobclient": ^0.0.3
     "@types/merge-stream": ^1.1.2
     "@types/node": "*"
     "@types/supports-color": ^7.2.0
